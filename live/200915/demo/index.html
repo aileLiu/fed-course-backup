@@ -1,0 +1,30 @@
+<html>
+	<body>
+
+
+		<script src="_.js"></script>
+		<script>
+
+			// 测试两种使用方式：
+			// 方式1：通过调用它（方法调用），然后再调用提供的API方法 _().unique();
+			console.log(_([1, 2, 3,2,1,4,"a","A"]).unique(function(item){
+				// 不区分大小写
+				return typeof item === 'string' ? item.toLowerCase() : item;
+			}));
+			// 方式2：通过对象，调用提供的方法 _.unique();
+			console.log(_.unique([1, 2, 3,2,1,4,"a","A"], function(item){
+				return typeof item === 'string' ? item.toLowerCase() : item;
+			}));
+
+			// 测试传参
+			console.log(_([1, 2, 3]).test('A', 'B', 'C'));
+			console.log(_.test([1, 2, 3], 'A', 'B', 'C'));
+
+			// 测试流式编程
+			console.log(_([1, 2, 3,2,1,4,"a","A"]).chain().unique().test('A', 'B', 'C').test2('_aileLiu').ending());
+			console.log(_.chain([1, 2, 3,2,1,4,"a","A"]).unique().test('A', 'B', 'C').test2('_aileLiu').ending());
+
+
+		</script>
+	</body>
+</html>

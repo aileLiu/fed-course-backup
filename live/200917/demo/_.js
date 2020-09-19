@@ -109,6 +109,7 @@
 		// 外部赋值的对象 = fn
 		return function(){
 			var length = arguments.length;// 用户真实传参长度
+			if(!length) return false;// 保证没有传参不报错
 			var rest = Array(length - startIndex);
 
 			// 完成rest参数数组

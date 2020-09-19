@@ -1,0 +1,28 @@
+<html>
+	<body>
+
+
+		<script src="_.js"></script>
+		<script>
+
+			// rest参数包装测试
+			function add(a, rest){
+				console.log(a)
+				console.log(rest)
+			}
+			var addWithRest = _.restArgs(add);
+
+			addWithRest(1,2,3,4,5,6,8)
+
+			// 迭代器测试
+			console.log(_.collect([1, 2, 3], function(item, index, target){
+				return item * 4;
+			}));
+			console.log(_.collect({a:1, b:2, c:3}, function(item, key, target){
+				return item * 4;
+			}));
+
+
+		</script>
+	</body>
+</html>

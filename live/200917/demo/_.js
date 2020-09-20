@@ -22,12 +22,37 @@
 		return res;
 	}
 
+	// reduce（累加）函数实现
+	_.reduce = function(data, iteratee, memo, context){
+		if(data == null) return null;// 数据不存在return null
+		iteratee = _.iteratee(iteratee, context, 4);// 这里的4代表返回处理4个参数的fn（由这里决定走哪个callback）
+		
+		var keys = !data.length && Object.keys(data),
+			length = (keys || data).length,
+			index = 0;
+		
+		if(arguments.length < 3){ 
+			memo = data[keys ? keys[index++] : index++];
+		}
+
+		// 这里index已完成+1（少一次循环）
+		for (; index < length; index++) {
+			var curKey = keys ? keys[index] : index;
+			// 向新数组中，插入迭代函数执行的结果
+			// 迭代函数传参由这里决定
+			memo = iteratee(memo, data[curKey], index, data)
+		};
+
+		return memo;
+
+	}
+
 	// collect（map）函数实现
 	// data 接收两种类型：数组 or 对象
 	// iteratee 迭代器函数，包含要迭代的规则
 	// context 需要改变this指向为此传入对象（？在哪改变）
 	_.collect = function(data, iteratee, context){
-		if(data == null) return [];
+		if(data == null) return [];// 数据不存在保证为[]
 		iteratee = _.iteratee(iteratee, context);// 传入迭代器经过包装会丰富迭代器的功能，返回function
 
 		// 1：如果data没有length为false，就执行Object.keys(data)=>输出对象的key组成的数组
@@ -47,7 +72,6 @@
 		};
 
 		return res;
-
 
 	}
 
@@ -75,7 +99,7 @@
 					return fn.call(context, value, index, collection);
 				};
 			case 4: 
-				// accumulator: ？
+				// accumulator: 累加器
 				return function(accumulator, value, index, collection){
 					return fn.call(context, accumulator, value, index, collection);
 				};
@@ -88,7 +112,8 @@
 
 	}
 	// 迭代器的包装函数（进一步加工迭代器）
-	_.iteratee = function(value, context){
+	// 进行context指向
+	_.iteratee = function(value, context, argCount){
 		// 保证返回fn
 		if(value == null) return function(value){
 			return value;
@@ -96,20 +121,27 @@
 
 		if(_.ifFunction(value)){
 			// 真正实现包装的关键
-			return creatCallback(value, context);
+			return creatCallback(value, context, argCount);
+			
 		}
 	}
 
 	// rest参数的包装函数
 	_.restArgs = function(fn){
 
-		var startIndex, curIndex;// 被包装函数参数长度
-		startIndex = curIndex = fn.length - 1;// 不能这样写，这样写curIndex的挂载对象改变（可能是全局/当前的this实例，我们这里只需要curIndex生命周期在这个函数结束）
+		var startIndex, curIndex;// 被包装函数参数长度的起始值
+		startIndex = curIndex = fn.length - 1;
+		// 不能以下这样写，这样写curIndex的挂载对象改变（可能是全局/当前的this实例，我们这里只需要curIndex生命周期在这个函数结束）
+		// var startIndex, curIndex = fn.length - 1;
 
 		// 外部赋值的对象 = fn
 		return function(){
+
 			var length = arguments.length;// 用户真实传参长度
-			if(!length) return false;// 保证没有传参不报错
+			// 使用包装后de函数没有传参时
+			// 扩展：被包装函数不存在接收指定参数时
+			// 处理思维：传入想要支持的方法，返回支持rest的该方法（调用包装后的函数，即使没有参数也可以完成对被包装函数的调用）
+			if(!length || curIndex == -1) return fn.apply(this, arguments);
 			var rest = Array(length - startIndex);
 
 			// 完成rest参数数组
@@ -128,7 +160,6 @@
 
 			return fn.apply(this, argsArr);
 		}
-
 
 	}
 

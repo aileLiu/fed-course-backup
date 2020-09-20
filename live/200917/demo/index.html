@@ -5,7 +5,7 @@
 		<script src="_.js"></script>
 		<script>
 
-			// rest参数包装测试
+			// rest包装测试 =》 (1, [2, 3, 4, 5, 6, 8])
 			function add(a, rest){
 				console.log(a)
 				console.log(rest)
@@ -14,12 +14,19 @@
 
 			addWithRest(1,2,3,4,5,6,8)
 
-			// 迭代器测试
+			// 迭代器测试 =》 [4, 8, 12]
 			console.log(_.collect([1, 2, 3], function(item, index, target){
 				return item * 4;
 			}));
 			console.log(_.collect({a:1, b:2, c:3}, function(item, key, target){
 				return item * 4;
+			}));
+
+			console.log(_.reduce([1, 2, 3, 4], function(memo, item, index, target){
+				return item + memo;
+			}));
+			console.log(_.reduce({a:1, b:2, c:3, d:4}, function(memo, item, index, target){
+				return item + memo;
 			}));
 
 
